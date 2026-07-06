@@ -1,0 +1,72 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: freshfeast-backend
+
+  profiles:
+    active: mysql
+
+  jackson:
+    default-property-inclusion: non_null
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:c2VjdXJlLWZyZXNoZmVhc3Qtc2VjcmV0LWtleS1jaGFuZ2UtaW4tcHJvZHVjdGlvbi0yMDI2LWZvb2QtZGVsaXZlcnk=}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+
+---
+# ---------------------------------------------------------
+# MYSQL PROFILE (default) — matches your local MySQL setup
+# ---------------------------------------------------------
+spring:
+  config:
+    activate:
+      on-profile: mysql
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/freshfeast?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:srajan2004}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+---
+# ---------------------------------------------------------
+# H2 PROFILE (opt-in only) — in-memory, wiped on every restart
+# Run with: mvn spring-boot:run -Dspring-boot.run.profiles=h2
+# ---------------------------------------------------------
+spring:
+  config:
+    activate:
+      on-profile: h2
+
+  datasource:
+    url: jdbc:h2:mem:freshfeast;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
